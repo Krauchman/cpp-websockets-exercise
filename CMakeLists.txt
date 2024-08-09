@@ -5,5 +5,14 @@ add_subdirectory(deps/boost EXCLUDE_FROM_ALL)
 
 find_package(OpenSSL REQUIRED)
 
+add_library(Websocket websocket.cpp)
+target_link_libraries(Websocket Boost::beast Boost::asio OpenSSL::SSL)
+
+add_subdirectory(logging)
+target_link_libraries(Logging Boost::iostreams)
+
+add_subdirectory(coinbase)
+target_link_libraries(Coinbase Boost::json Logging)
+
 add_executable(ticker_subscriber main.cpp)
-target_link_libraries(ticker_subscriber Boost::beast Boost::asio Boost::json Boost::lockfree Boost::iostreams Boost::log OpenSSL::SSL)
+target_link_libraries(ticker_subscriber Boost::beast Boost::asio Boost::json Boost::lockfree Boost::log Websocket Logging Coinbase)
