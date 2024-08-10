@@ -27,4 +27,4 @@ namespace coinbase::subscribe {
         beast::flat_buffer buffer_;
     };
 
-}; // coinbase::subscribe
+} // coinbase::subscribe

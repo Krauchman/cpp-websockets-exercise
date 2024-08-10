@@ -38,4 +38,4 @@ namespace coinbase::subscribe {
         buffer_.consume(buffer_.size());
     }
 
-}; // coinbase::subscribe
+} // coinbase::subscribe

@@ -2,47 +2,27 @@
 #include "coinbase/message.h"
 #include "logging/logging.h"
 
-#include <boost/lockfree/spsc_queue.hpp>
+#include "shared_queue/consumer.h"
+#include "shared_queue/lock_queue.h"
+#include "shared_queue/spsc_lockfree_queue.h"
+
 #include <boost/log/trivial.hpp>
 #include <boost/asio.hpp>
 
 #include <thread>
 
 namespace net = boost::asio;
-namespace lockfree = boost::lockfree;
 
-namespace queue {
-    
-    template <typename T>
-    class looped_consumer {
-    public:
-        looped_consumer(std::shared_ptr<lockfree::spsc_queue<T>> q_ptr)
-            : q_ptr_(q_ptr)
-        {
-        }
-
-        void operator()(std::function<void(const T&)> callback) {
-            while (true) {
-                T message;
-                while (!q_ptr_->pop(message));
-
-                callback(message);
-            }
-        }
-    private:
-        std::shared_ptr<lockfree::spsc_queue<T>> q_ptr_;
-    };
-
-} // queue
+using ticker_message = coinbase::message::ticker_message;
 
 int main() {
     // shared queue
-    auto q = std::make_shared<lockfree::spsc_queue<coinbase::message::ticker_message>>(200);
+    auto q = std::make_shared<shared_queue::spsc_lockfree_queue<ticker_message>>(200);
     
     // logger thread
     logging::csv_logger logger("output.csv");
-    queue::looped_consumer consumer(q);
-    auto ft = std::async(std::launch::async, consumer, [&logger](const coinbase::message::ticker_message& message) {
+    shared_queue::looped_consumer<ticker_message> consumer(q);
+    auto ft = std::async(std::launch::async, consumer, [&logger](const ticker_message& message) {
         logger.log(message);
     });
 
