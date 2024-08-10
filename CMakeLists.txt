@@ -4,11 +4,7 @@ project(ticker_subscriber)
 find_package(Boost 1.74 COMPONENTS log thread REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS}) 
 
-add_subdirectory(websocket)
-add_subdirectory(logging)
 add_subdirectory(coinbase)
-
-target_link_libraries(Coinbase Logging Websocket)
 
 add_executable(ticker_subscriber main.cpp)
 target_link_libraries(ticker_subscriber ${Boost_LIBRARIES} Logging Coinbase)
