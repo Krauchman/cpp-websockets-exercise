@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../logging/logging.h"
+#include <logging/logging.h>
 
 #include <nlohmann/json.hpp>
 
