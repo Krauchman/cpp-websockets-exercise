@@ -1,10 +1,10 @@
 #include "subscribe.h"
 
 #include <boost/log/trivial.hpp>
-#include <boost/json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace coinbase::subscribe {
-    namespace json = boost::json;
+    using json = nlohmann::json;
 
     ticker_subscriber::ticker_subscriber(net::io_context& ioc)
         : session_("ws-feed.exchange.coinbase.com", "443", ioc)
@@ -24,12 +24,12 @@ namespace coinbase::subscribe {
     }
 
     void ticker_subscriber::subscribe() {
-        json::value subscribe_message_data = {
+        json subscribe_message_data = {
             { "type", "subscribe" },
-            { "product_ids", json::array{"ETH-USD", "BTC-USD"} },
-            { "channels", json::array{"ticker"} }
+            { "product_ids", {"ETH-USD", "BTC-USD"} },
+            { "channels", {"ticker"} }
         };
-        std::string subscribe_message = json::serialize(subscribe_message_data);
+        std::string subscribe_message = subscribe_message_data.dump();
         
         session_.write(subscribe_message);
 

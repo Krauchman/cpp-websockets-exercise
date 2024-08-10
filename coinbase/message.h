@@ -2,10 +2,10 @@
 
 #include "../logging/logging.h"
 
-#include <boost/json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace coinbase::message {
-    namespace json = boost::json;
+    using json = nlohmann::json;
 
     class message_base : public logging::csv_row_convertible {
     public:
@@ -17,7 +17,7 @@ namespace coinbase::message {
         virtual std::vector<std::string> get_field_names() const = 0;
 
     private:
-        json::value data_;
+        json data_;
     };
 
     class ticker_message : public message_base {

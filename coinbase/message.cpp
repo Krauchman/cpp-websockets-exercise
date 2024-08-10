@@ -10,10 +10,8 @@ namespace coinbase::message {
     std::string message_base::to_csv_row() const {
         std::string result;
         for (auto field_name : get_field_names()) {
-            auto value_ptr = data_.as_object().if_contains(field_name);
-
-            if (value_ptr) {
-                result += json::serialize(*value_ptr);
+            if (data_.contains(field_name)) {
+                result += data_[field_name].dump();
             }
             result.push_back(',');
         }
