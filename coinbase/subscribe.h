@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../websocket.h"
+#include "../websocket/websocket.h"
 
 #include <boost/beast.hpp>
 #include <boost/asio.hpp>

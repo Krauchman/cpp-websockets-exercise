@@ -65,4 +65,4 @@ namespace websocket {
         ws_.close(beast::websocket::close_code::normal);
     }
 
-} // session
+} // websocket

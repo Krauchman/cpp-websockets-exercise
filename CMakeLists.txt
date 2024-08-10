@@ -5,7 +5,7 @@ add_subdirectory(deps/boost EXCLUDE_FROM_ALL)
 
 find_package(OpenSSL REQUIRED)
 
-add_library(Websocket websocket.cpp)
+add_subdirectory(websocket)
 target_link_libraries(Websocket Boost::beast Boost::asio OpenSSL::SSL)
 
 add_subdirectory(logging)

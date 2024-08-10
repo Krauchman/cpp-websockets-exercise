@@ -33,4 +33,4 @@ namespace websocket {
         bool started_ = false;
     };
 
-} // session
+} // websocket
