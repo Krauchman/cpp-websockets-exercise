@@ -1,1 +1,1 @@
-add_library(Coinbase message.cpp)
+add_library(Coinbase message.cpp subscribe.cpp)

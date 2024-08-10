@@ -12,7 +12,7 @@ add_subdirectory(logging)
 target_link_libraries(Logging Boost::iostreams)
 
 add_subdirectory(coinbase)
-target_link_libraries(Coinbase Boost::json Logging)
+target_link_libraries(Coinbase Boost::json Boost::log Boost::beast Boost::asio Logging Websocket)
 
 add_executable(ticker_subscriber main.cpp)
-target_link_libraries(ticker_subscriber Boost::beast Boost::asio Boost::json Boost::lockfree Boost::log Websocket Logging Coinbase)
+target_link_libraries(ticker_subscriber Boost::asio Boost::lockfree Boost::log Logging Coinbase)

@@ -33,4 +33,4 @@ namespace coinbase::message {
                 "side", "time", "trade_id", "last_size"};
     }
 
-} // coinbase
+} // coinbase::message

@@ -28,4 +28,4 @@ namespace coinbase::message {
         std::vector<std::string> get_field_names() const override;
     };
     
-} // coinbase
+} // coinbase::message
