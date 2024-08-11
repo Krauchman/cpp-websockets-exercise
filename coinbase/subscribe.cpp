@@ -19,6 +19,7 @@ namespace coinbase::subscribe {
             throw std::runtime_error("Failed to subscribe to a ticker channel");
         }
 
+        BOOST_LOG_TRIVIAL(info) << "Listening for messages";
         while (true) {
             session_.read(buffer_);
             callback(beast::buffers_to_string(buffer_.data()));

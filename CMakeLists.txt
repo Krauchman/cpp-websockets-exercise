@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
-project(ticker_subscriber)
+project(ticker_logger)
 
 set(BASEPATH "${CMAKE_SOURCE_DIR}")
 include_directories("${BASEPATH}")
@@ -10,5 +10,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_subdirectory(logging)
 add_subdirectory(coinbase)
 
-add_executable(ticker_subscriber main.cpp)
-target_link_libraries(ticker_subscriber ${Boost_LIBRARIES} Logging Coinbase)
+add_library(Config config.cpp)
+target_link_libraries(Config ${Boost_LIBRARIES})
+
+add_executable(ticker_logger main.cpp)
+target_link_libraries(ticker_logger ${Boost_LIBRARIES} Logging Coinbase Config)
