@@ -36,6 +36,7 @@ int main(int ac, char* av[]) {
     
     // starting the logger thread
     logging::csv_logger logger(config.output_file);
+    logger.log_header<ticker_message>();
     shared_queue::looped_consumer<ticker_message> consumer(q);
     
     auto ft = std::async(std::launch::async, consumer, [&logger](const ticker_message& message) {

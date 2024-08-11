@@ -13,6 +13,7 @@ namespace coinbase::message {
         message_base(std::string message_str);
 
         std::string to_csv_row() const override;
+        std::string to_csv_header() const override;
 
         virtual std::vector<std::string> get_field_names() const = 0;
 

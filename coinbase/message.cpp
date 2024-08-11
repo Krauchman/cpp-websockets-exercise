@@ -18,6 +18,15 @@ namespace coinbase::message {
         return result;
     }
 
+    std::string message_base::to_csv_header() const {
+        std::string result;
+        for (auto field_name : get_field_names()) {
+            result += field_name;
+            result.push_back(',');
+        }
+        return result;
+    }
+
     ticker_message::ticker_message(std::string message_str) 
         : message_base(message_str)
     {

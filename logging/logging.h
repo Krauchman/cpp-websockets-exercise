@@ -31,11 +31,18 @@ namespace logging {
     class csv_row_convertible {
     public:
         virtual std::string to_csv_row() const = 0;
+        virtual std::string to_csv_header() const = 0;
     };
 
     class csv_logger : public file_logger_base<csv_row_convertible> {
     public:
         csv_logger(std::string path);
+
+        template <typename T>
+        void log_header() {
+            T dummy;
+            out_ << dummy.to_csv_header() << std::endl;
+        }
     
     protected:
         std::string get_log_repr(const csv_row_convertible& entry) override;
