@@ -20,7 +20,7 @@ namespace websocket {
 
         // Set SNI Hostname
         if (!SSL_set_tlsext_host_name(ws_.next_layer().native_handle(), host_.c_str())) {
-            throw "Failed to set SNI Hostname";
+            throw std::runtime_error("Failed to set SNI Hostname");
         }
 
         // SSL handshake
@@ -41,7 +41,7 @@ namespace websocket {
 
     void session::write(std::string& message) {
         if (!started_) {
-            throw "Failed to send message: session has not started yet";
+            throw std::logic_error("Failed to send message: session has not started yet");
         }
         
         ws_.write(net::buffer(message));
@@ -49,14 +49,14 @@ namespace websocket {
 
     void session::read(beast::flat_buffer& buffer) {
         if (!started_) {
-            throw "Failed to read message: session has not started yet";
+            throw std::logic_error("Failed to read message: session has not started yet");
         }
         ws_.read(buffer);
     }
 
     void session::close() {
         if (!started_) {
-            throw "Failed to close connection: session has not started yet";
+            throw std::logic_error("Failed to close connection: session has not started yet");
         }
 
         ws_.close(beast::websocket::close_code::normal);
