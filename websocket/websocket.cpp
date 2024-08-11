@@ -51,10 +51,7 @@ namespace websocket {
         if (!started_) {
             throw "Failed to read message: session has not started yet";
         }
-        // auto start_ts = std::chrono::high_resolution_clock::now();
         ws_.read(buffer);
-        // const auto dur = std::chrono::high_resolution_clock::now() - start_ts;
-        // std::cout << std::chrono::nanoseconds(dur).count() << std::endl;
     }
 
     void session::close() {

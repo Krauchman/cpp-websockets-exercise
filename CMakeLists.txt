@@ -4,7 +4,7 @@ project(ticker_subscriber)
 set(BASEPATH "${CMAKE_SOURCE_DIR}")
 include_directories("${BASEPATH}")
 
-find_package(Boost 1.74 COMPONENTS log thread REQUIRED)
+find_package(Boost 1.74 COMPONENTS log thread program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 add_subdirectory(logging)

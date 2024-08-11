@@ -16,15 +16,16 @@ namespace coinbase::subscribe {
 
     class ticker_subscriber : public subscriber_base {
     public:
-        ticker_subscriber(net::io_context& ioc);
+        ticker_subscriber(net::io_context& ioc, std::vector<std::string> product_ids);
 
         void start(std::function<void(const std::string&)> callback) override;
     
     private:
-        void subscribe();
+        bool subscribe();
 
         websocket::session session_;
         beast::flat_buffer buffer_;
+        std::vector<std::string> product_ids_;
     };
 
 } // coinbase::subscribe
