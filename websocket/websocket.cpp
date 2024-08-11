@@ -10,8 +10,8 @@ namespace websocket {
         : resolver_(ioc)
         , ctx_(ssl::context::tlsv12_client)
         , ws_(ioc, ctx_)
-        , host_(host)
-        , port_(port)
+        , host_(std::move(host))
+        , port_(std::move(port))
     {
     }
 
@@ -39,7 +39,7 @@ namespace websocket {
         started_ = true;
     }
 
-    void session::write(std::string& message) {
+    void session::write(const std::string& message) {
         if (!started_) {
             throw std::logic_error("Failed to send message: session has not started yet");
         }

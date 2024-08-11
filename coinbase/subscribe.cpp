@@ -8,7 +8,7 @@ namespace coinbase::subscribe {
 
     ticker_subscriber::ticker_subscriber(net::io_context& ioc, std::vector<std::string> product_ids)
         : session_("ws-feed.exchange.coinbase.com", "443", ioc)
-        , product_ids_(product_ids)
+        , product_ids_(std::move(product_ids))
     {
     }
 

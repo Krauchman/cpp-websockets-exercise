@@ -18,7 +18,7 @@ namespace websocket {
 
         void start();
 
-        void write(std::string& message);
+        void write(const std::string& message);
 
         void read(beast::flat_buffer& buffer);
 

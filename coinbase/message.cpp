@@ -3,7 +3,7 @@
 namespace coinbase::message {
 
     message_base::message_base(std::string message_str)
-        : data_(std::move(json::parse(message_str)))
+        : data_(std::move(json::parse(std::move(message_str))))
     {
     }
 
