@@ -1,6 +1,5 @@
 #include "ticker_logger.h"
 
-#include <coinbase/message.h>
 #include <logging/logging.h>
 
 #include <shared_queue/consumer.h>
@@ -12,53 +11,65 @@
 #include <thread>
 
 namespace coinbase::ticker_logger {
-    using ticker_message = message::ticker_message;
 
     runner::runner(boost::asio::io_context& ioc, config conf)
-        : conf_(std::move(conf))
-        , subscriber_(ioc, conf_.product_ids)
+        : runner(std::move(std::make_unique<ticker_subscriber>(ioc, conf.product_ids)), conf)
     {
     }
 
     runner::runner(std::unique_ptr<websocket::session_base> ws_session, config conf)
-        : conf_(std::move(conf))
-        , subscriber_(std::move(ws_session), conf_.product_ids)
+        : runner(std::move(std::make_unique<ticker_subscriber>(std::move(ws_session), conf.product_ids)), conf)
     {
     }
 
-    void runner::start() {
+    runner::runner(std::unique_ptr<ticker_subscriber> subscriber, config conf)
+        : conf_(std::move(conf))
+        , subscriber_(std::move(subscriber))
+        , logger_(std::make_unique<logging::csv_logger>(conf_.output_file))
+    {
         BOOST_LOG_TRIVIAL(info) << "Output path: " << conf_.output_file;
         BOOST_LOG_TRIVIAL(info) << "Number of product IDs to subscribe to: " << conf_.product_ids.size();
 
-        // initializing a shared queue
-        std::shared_ptr<shared_queue::shared_queue_base<ticker_message>> queue_ptr;
         if (conf_.use_lock_queue) {
             BOOST_LOG_TRIVIAL(info) << "Thead-shared queue implementation: locking queue";
-            queue_ptr = std::make_shared<shared_queue::lock_queue<ticker_message>>();
+            queue_ = std::make_shared<shared_queue::lock_queue<ticker_message>>();
         } else {
             BOOST_LOG_TRIVIAL(info) << "Thead-shared queue implementation: lock-free queue";
-            queue_ptr = std::make_shared<shared_queue::spsc_lockfree_queue<ticker_message>>(100);
+            queue_ = std::make_shared<shared_queue::spsc_lockfree_queue<ticker_message>>(200);
         }
+    }
+
+    void runner::start() {
+        BOOST_LOG_TRIVIAL(info) << "Runner starting";
+
+        start_logger_thread();
+        subscribe();
+        wait_logger_thread();
+
+        BOOST_LOG_TRIVIAL(info) << "Done";
+    }
+
+    void runner::start_logger_thread() {
+        logger_->log_header<ticker_message>();
+
+        shared_queue::looped_consumer<ticker_message> consumer(queue_);
         
-        // starting the logger thread
-        logging::csv_logger logger(conf_.output_file);
-        logger.log_header<ticker_message>();
-        shared_queue::looped_consumer<ticker_message> consumer(queue_ptr);
-        
-        auto logger_thread_ft = std::async(std::launch::async, consumer, [&logger](const ticker_message& message) {
+        logger_thread_ft_ = std::async(std::launch::async, consumer, [this](const ticker_message& message) {
             if (message.is_terminational()) {
                 throw got_termination_message();
             }
 
-            logger.log(message);
+            logger_->log(message);
         });
         BOOST_LOG_TRIVIAL(info) << "Started the logger thread";
+    }
 
-        // the main thread logic (processing websockets and parsing JSONs)
+    void runner::subscribe() {
         try {
             BOOST_LOG_TRIVIAL(info) << "Starting Coinbase ticker channel subscriber";
-            subscriber_.start([queue_ptr](const std::string& message) {
-                if (!queue_ptr->push({message})) {
+            subscriber_->start([this](const std::string& message) {
+
+                if (!queue_->push({message})) {
                     BOOST_LOG_TRIVIAL(error) << "Failed to push message to the queue: allocation is full";
                 }
             });
@@ -66,13 +77,13 @@ namespace coinbase::ticker_logger {
             BOOST_LOG_TRIVIAL(error) << "Subscriber thread caught exception, stopping. Exception: " << e.what();
             ticker_message termination_message;
             termination_message.make_terminational();
-            queue_ptr->push(termination_message);
+            queue_->push(termination_message);
         }
+    }
 
+    void runner::wait_logger_thread() {
         BOOST_LOG_TRIVIAL(info) << "Waiting for the logger thread to finish";
-        logger_thread_ft.wait();
-
-        BOOST_LOG_TRIVIAL(info) << "Done";
+        logger_thread_ft_.wait();
     }
 
 } // coinbase::ticker_logger
