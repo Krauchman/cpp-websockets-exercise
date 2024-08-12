@@ -4,10 +4,10 @@ find_package(Boost COMPONENTS filesystem system unit_test_framework REQUIRED)
 
 include(FetchContent)
 FetchContent_Declare(
-  googletest
+  GTest
   URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
 )
-FetchContent_MakeAvailable(googletest)
+FetchContent_MakeAvailable(GTest)
 
 file(GLOB UNIT_TESTS_SRC_FILES ${PROJECT_SOURCE_DIR}/test/*.cpp)
 

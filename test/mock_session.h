@@ -23,7 +23,6 @@ public:
 
     std::string read() override {
         using namespace std::chrono_literals;
-        std::this_thread::sleep_for(10us);
 
         if (messages_stack_.empty()) {
             throw out_of_messages_exception();

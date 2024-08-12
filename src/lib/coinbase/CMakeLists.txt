@@ -1,4 +1,8 @@
-find_package(nlohmann_json 3.2.0 REQUIRED)
+include(FetchContent)
+
+FetchContent_Declare(Json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
+FetchContent_MakeAvailable(Json)
+
 find_package(Boost 1.74 COMPONENTS log REQUIRED)
 
 add_subdirectory(${LIB_ROOT}/websocket websocket)

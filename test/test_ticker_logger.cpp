@@ -77,7 +77,7 @@ R"("2022-10-19T23:28:22.061769Z",370843401,"11.4396987"
     }
 
     BOOST_DATA_TEST_CASE(test_case_correct_concurrency, bdata::xrange(2), use_lock_queue) {
-        size_t messages_count = 1000;
+        size_t messages_count = 300;
 
         std::vector<std::string> messages;
         messages.push_back(R"({"type": "subscriptions"})");

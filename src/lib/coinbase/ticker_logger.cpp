@@ -35,7 +35,7 @@ namespace coinbase::ticker_logger {
             queue_ = std::make_shared<shared_queue::lock_queue<ticker_message>>();
         } else {
             BOOST_LOG_TRIVIAL(info) << "Thead-shared queue implementation: lock-free queue";
-            queue_ = std::make_shared<shared_queue::spsc_lockfree_queue<ticker_message>>(200);
+            queue_ = std::make_shared<shared_queue::spsc_lockfree_queue<ticker_message>>(500);
         }
     }
 
