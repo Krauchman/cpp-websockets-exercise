@@ -6,8 +6,7 @@ C++ websockets exercise
 Overview
 -
 Subscribes to a Coinbase ticker channel and logs all of the incoming messages in a separate thread.
-
-
+Tested on Ubuntu 22.04.4 LTS.
 
 Build
 -
