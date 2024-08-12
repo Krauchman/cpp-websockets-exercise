@@ -9,25 +9,32 @@ namespace coinbase::message {
 
     std::string message_base::to_csv_row() const {
         std::string result;
-        for (auto field_name : get_field_names()) {
+        auto field_names = get_field_names();
+        for (size_t i = 0; i < field_names.size(); ++i) {
+            if (i) {
+                result.push_back(',');
+            }
+            const auto& field_name = field_names[i];
             if (data_.contains(field_name)) {
                 result += data_[field_name].dump();
             }
-            result.push_back(',');
         }
         return result;
     }
 
     std::string message_base::to_csv_header() const {
         std::string result;
-        for (auto field_name : get_field_names()) {
-            result += field_name;
-            result.push_back(',');
+        auto field_names = get_field_names();
+        for (size_t i = 0; i < field_names.size(); ++i) {
+            if (i) {
+                result.push_back(',');
+            }
+            result += field_names[i];
         }
         return result;
     }
 
-    ticker_message::ticker_message(std::string message_str) 
+    ticker_message::ticker_message(std::string message_str)
         : message_base(message_str)
     {
     }
