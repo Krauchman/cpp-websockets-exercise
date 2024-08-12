@@ -1,6 +1,7 @@
 #include "message.h"
 
 namespace coinbase::message {
+    const std::string TERMINATION_FIELD_NAME = "termination";
 
     message_base::message_base(std::string message_str)
         : data_(std::move(json::parse(std::move(message_str))))
@@ -32,6 +33,14 @@ namespace coinbase::message {
             result += field_names[i];
         }
         return result;
+    }
+
+    bool message_base::is_terminational() const {
+        return data_.contains(TERMINATION_FIELD_NAME) && data_[TERMINATION_FIELD_NAME].dump() == "true";
+    }
+
+    void message_base::make_terminational() {
+        data_[TERMINATION_FIELD_NAME] = true;
     }
 
     ticker_message::ticker_message(std::string message_str)

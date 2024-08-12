@@ -46,6 +46,10 @@ namespace coinbase::ticker_logger {
         shared_queue::looped_consumer<ticker_message> consumer(queue_ptr);
         
         auto logger_thread_ft = std::async(std::launch::async, consumer, [&logger](const ticker_message& message) {
+            if (message.is_terminational()) {
+                throw got_termination_message();
+            }
+
             logger.log(message);
         });
         BOOST_LOG_TRIVIAL(info) << "Started the logger thread";
@@ -59,10 +63,16 @@ namespace coinbase::ticker_logger {
                 }
             });
         } catch (std::exception e) {
-            BOOST_LOG_TRIVIAL(error) << "Subscriber thread caught exception: " << e.what();
+            BOOST_LOG_TRIVIAL(error) << "Subscriber thread caught exception, stopping. Exception: " << e.what();
+            ticker_message termination_message;
+            termination_message.make_terminational();
+            queue_ptr->push(termination_message);
         }
 
+        BOOST_LOG_TRIVIAL(info) << "Waiting for the logger thread to finish";
         logger_thread_ft.wait();
+
+        BOOST_LOG_TRIVIAL(info) << "Done";
     }
 
 } // coinbase::ticker_logger

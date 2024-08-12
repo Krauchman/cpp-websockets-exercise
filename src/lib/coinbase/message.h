@@ -16,6 +16,9 @@ namespace coinbase::message {
 
         std::string to_csv_row() const override;
         std::string to_csv_header() const override;
+        
+        bool is_terminational() const;
+        void make_terminational();
 
         virtual std::vector<std::string> get_field_names() const = 0;
 

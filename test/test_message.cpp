@@ -8,8 +8,7 @@
 BOOST_AUTO_TEST_SUITE(test_suite_coinbase_message)
     using namespace coinbase::message;
 
-    BOOST_AUTO_TEST_CASE(test_case_csv_functions)
-    {
+    BOOST_AUTO_TEST_CASE(test_case_csv_functions) {
         ticker_message message(R"({
             "type": "ticker",
             "sequence": 37475248783,

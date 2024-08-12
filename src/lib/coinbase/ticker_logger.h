@@ -15,6 +15,8 @@ namespace coinbase::ticker_logger {
         bool use_lock_queue = false;
     };
 
+    class got_termination_message : public std::exception {};
+
     class runner {
     public:
         runner(boost::asio::io_context& ioc, config conf);

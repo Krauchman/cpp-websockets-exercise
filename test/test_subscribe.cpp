@@ -8,10 +8,11 @@
 #include <coinbase/subscribe.h>
 #include <websocket/websocket.h>
 
+#include <exception>
+
 BOOST_AUTO_TEST_SUITE(test_suite_subscriber)
 
-    BOOST_AUTO_TEST_CASE(test_case_subscribe)
-    {
+    BOOST_AUTO_TEST_CASE(test_case_subscribe_and_receive_messages) {
         auto session = std::make_unique<mock_session>(std::vector<std::string>{
             R"({"type": "subscriptions"})",
             R"({"type": "ticker", "side": "sell"})",
@@ -36,6 +37,19 @@ BOOST_AUTO_TEST_SUITE(test_suite_subscriber)
         catch (out_of_messages_exception e) {}
 
         BOOST_CHECK_EQUAL_COLLECTIONS(actual_messages.begin(), actual_messages.end(), expected_messages.begin(), expected_messages.end());
+    }
+
+    BOOST_AUTO_TEST_CASE(test_case_no_subscribe) {
+        auto session = std::make_unique<mock_session>(std::vector<std::string>{
+            R"({"type": "ticker", "side": "sell"})",
+            R"({"type": "ticker", "product_id": "ETH-USD"})"
+        });
+        EXPECT_CALL(*session, start()).Times(1);
+        EXPECT_CALL(*session, write(R"({"channels":["ticker"],"product_ids":["ETH-USD","TEST-EUR"],"type":"subscribe"})")).Times(1);
+
+        coinbase::subscribe::ticker_subscriber subscriber(std::move(session), std::vector<std::string>{"ETH-USD", "TEST-EUR"});
+
+        BOOST_CHECK_THROW(subscriber.start([](const std::string& message) {}), std::runtime_error);
     }
 
 BOOST_AUTO_TEST_SUITE_END()

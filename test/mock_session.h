@@ -4,7 +4,10 @@
 
 #include <gmock/gmock.h>
 
-class out_of_messages_exception : public std::exception {}; 
+#include <chrono>
+#include <thread>
+
+class out_of_messages_exception : public std::exception {};
 
 class mock_session : public websocket::session_base {
 public:
@@ -19,6 +22,9 @@ public:
     MOCK_METHOD(void, close, (), (override));
 
     std::string read() override {
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for(2ms);
+
         if (messages_stack_.empty()) {
             throw out_of_messages_exception();
         }
