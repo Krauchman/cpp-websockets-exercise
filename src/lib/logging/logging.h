@@ -11,6 +11,8 @@ namespace logging {
     template <typename T>
     class logger_base {
     public:
+        virtual ~logger_base() = default;
+
         virtual void log(const T& entry) = 0;
     };
 
@@ -30,6 +32,8 @@ namespace logging {
 
     class csv_row_convertible {
     public:
+        virtual ~csv_row_convertible() = default;
+
         virtual std::string to_csv_row() const = 0;
         virtual std::string to_csv_header() const = 0;
     };

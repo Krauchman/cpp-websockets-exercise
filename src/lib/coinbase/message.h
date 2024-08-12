@@ -9,6 +9,8 @@ namespace coinbase::message {
 
     class message_base : public logging::csv_row_convertible {
     public:
+        virtual ~message_base() = default;
+
         message_base() {}
         message_base(std::string message_str);
 

@@ -47,11 +47,14 @@ namespace websocket {
         ws_.write(net::buffer(message));
     }
 
-    void session::read(beast::flat_buffer& buffer) {
+    std::string session::read() {
         if (!started_) {
             throw std::logic_error("Failed to read message: session has not started yet");
         }
-        ws_.read(buffer);
+
+        buffer_.consume(buffer_.size());
+        ws_.read(buffer_);
+        return beast::buffers_to_string(buffer_.data());
     }
 
     void session::close() {
