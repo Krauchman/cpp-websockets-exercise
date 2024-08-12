@@ -1,5 +1,7 @@
 #include "message.h"
 
+#include <exception>
+
 namespace coinbase::message {
     const std::string TERMINATION_FIELD_NAME = "termination";
 
@@ -44,8 +46,11 @@ namespace coinbase::message {
     }
 
     ticker_message::ticker_message(std::string message_str)
-        : message_base(message_str)
+        : message_base(std::move(message_str))
     {
+        if (!data_.contains("type") || data_["type"].dump() != "\"ticker\"") {
+            throw std::logic_error("Failed to initialize ticker message: data type is not \"ticker\"");
+        }
     }
 
     std::vector<std::string> ticker_message::get_field_names() const {

@@ -22,7 +22,7 @@ namespace coinbase::message {
 
         virtual std::vector<std::string> get_field_names() const = 0;
 
-    private:
+    protected:
         json data_;
     };
 
