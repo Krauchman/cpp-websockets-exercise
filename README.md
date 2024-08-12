@@ -11,7 +11,7 @@ Subscribes to a Coinbase ticker channel and logs all of the incoming messages in
 
 Build
 -
-1. C++14, `OpenSSL` and `Boost` >= 1.74 are required to build the app. Boost installation command for Unix variants:
+1. C++14, `OpenSSL` and `Boost >= 1.74` are required to build the app. Boost installation command for Unix variants:
     ```
     sudo apt-get install libboost-all-dev
     ```
